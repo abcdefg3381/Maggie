@@ -1,0 +1,92 @@
+<!-- Project Maggie - common files - LIU Xiaofan -->
+<project name="Maggie" default="maggie.preamble" basedir=".">
+
+	<!-- Name of project and version -->
+	<property name="maggie.proj.name" value="Maggie" />
+	<property name="maggie.version" value="1.0" />
+
+	<!-- Global properties for this build -->
+	<property name="maggie.src.dir" value="../Maggie/src" />
+	<property name="maggie.meta.dir" value="../Maggie/src/etc" />
+	<property name="maggie.community.dir" value="../Maggie/fastCommunity" />
+	<property name="maggie.mfinder.dir" value="../Maggie/mfinder" />
+	<property name="maggie.lib.dir" value="../Maggie/lib" />
+	<property name="maggie.build.dir" value="../Maggie/build" />
+	<property name="maggie.build.community.dir" value="../Maggie/build/fastCommunity" />
+	<property name="maggie.build.lib.dir" value="../Maggie/build/lib" />
+	<property name="maggie.build.mfinder.dir" value="../Maggie/build/mfinder" />
+	<property name="gdi.key" value="../keystore/gdicert.crt" />
+
+	<!-- Classpath declaration -->
+	<path id="maggie.classpath">
+		<fileset dir="${maggie.lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<!-- Useful shortcuts -->
+	<patternset id="maggie.meta.files">
+		<exclude name="**/*.java" />
+	</patternset>
+
+	<!-- Clean up -->
+	<target name="maggie.clean" description="Clean the build directory">
+		<delete dir="${maggie.build.dir}" />
+		<mkdir dir="${maggie.build.dir}" />
+	</target>
+
+	<!-- Compile Java source - depends="maggie.clean" -->
+	<target name="maggie.compile">
+		<mkdir dir="${maggie.build.dir}" />
+		<javac srcdir="${maggie.src.dir}" destdir="${maggie.build.dir}" classpathref="maggie.classpath" />
+	</target>
+
+	<!-- Copy metadata to build classpath -->
+	<target name="maggie.copymetafiles">
+		<copy todir="${maggie.build.dir}">
+			<fileset dir="${maggie.meta.dir}">
+				<patternset refid="maggie.meta.files" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- Copy library to build classpath -->
+	<target name="maggie.copylibrary">
+		<copy todir="${maggie.build.lib.dir}">
+			<fileset dir="${maggie.lib.dir}">
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- Copy fast community algorithm to build classpath -->
+	<target name="maggie.copycommunity">
+		<copy todir="${maggie.build.community.dir}">
+			<fileset dir="${maggie.community.dir}">
+				<include name="**/*.exe" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- Copy mfinder to build classpath -->
+	<target name="maggie.copymfinder">
+		<copy todir="${maggie.build.mfinder.dir}">
+			<fileset dir="${maggie.mfinder.dir}">
+				<include name="**/*.exe" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- Run MarketOne main programme -->
+	<target name="maggie.preamble" description="prepare necessary files">
+		<antcall target="maggie.compile" />
+		<antcall target="maggie.copymetafiles" />
+		<antcall target="maggie.copycommunity" />
+		<antcall target="maggie.copymfinder" />
+	</target>
+
+	<!-- Jar Maggie Common -->
+	<target name="maggie.jarcommon" description="Jar Maggie common files" depends="maggie.compile">
+		<jar destfile="maggie-common.jar" basedir="./build" includes="maggie/**" />
+	</target>
+</project>
